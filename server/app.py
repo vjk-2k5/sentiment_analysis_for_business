@@ -3,7 +3,11 @@ import pandas as pd
 from fin_bert_analysis import finbertAnalysis, get_recommendation
 from emoji_sentiment import load_emoji_data, analyze_emoji_sentiment
 from general_sentiment_analysis import analyze
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
+app = Flask(__name__)
+CORS(app)
 def load_financial_terms(csv_file):
     df = pd.read_csv(csv_file, header=0)
     financial_terms = df['term'].tolist()
@@ -32,21 +36,13 @@ def classify_paragraph(paragraph, emoji_list, emoji_sentiment_data):
         classification = classify_sentence(sentence, financial_terms)
         classified_sentences.append((sentence, classification))
     
-    
     extracted_emojis = extract_emojis(paragraph, emoji_list)
-
-    
     financial_statements = [sentence for sentence, classification in classified_sentences if classification == "financial"]
+    
     sentiment_results = [(statement, finbertAnalysis(statement)) for statement in financial_statements]
-    
-    
     recommendations = {statement: get_recommendation(sentiment) for statement, sentiment in sentiment_results}
-    
-        
     emoji_sentiment = analyze_emoji_sentiment(extracted_emojis, emoji_sentiment_data)
-    
     general_statements = [sentence for sentence, classification in classified_sentences if classification == "general"]
-    
     analyzed_general_statements = [(statement, analyze(statement)) for statement in general_statements]
     
     return classified_sentences, len(extracted_emojis), recommendations, emoji_sentiment, analyzed_general_statements
@@ -57,37 +53,47 @@ nlp = spacy.load('en_core_web_sm')
 financial_terms = load_financial_terms('C:\\Rohit\\Projects\Fintech\\sentiment_analysis_for_business\\emoji_analysis\\financial_terms.csv')
 emoji_list, emoji_sentiment_data = load_emoji_data('C:\\Rohit\\Projects\Fintech\\sentiment_analysis_for_business\\emoji_analysis\\Emoji_Sentiment_Data_v1.0.csv')
 
-paragraph = """
-     The stock market is declining! 😭 I made a huge loss on my investment😔. 
-    The weather is harsh today, and I feel lazy. 🌞
-    """
 
-classified_results, emoji_count, recommendations, emoji_sentiment, analyzed_general_statements = classify_paragraph(paragraph, emoji_list, emoji_sentiment_data)
+@app.route('/analyze', methods=['POST'])
+def analyze_paragraph():
+    data = request.get_json()
+    paragraph = data.get('paragraph', '')
 
+    classified_results, emoji_count, recommendations, emoji_sentiment, analyzed_general_statements = classify_paragraph(paragraph, emoji_list, emoji_sentiment_data)
 
+    response = {
+        "classified_results": [],
+        "recommendations": [],
+        "general_statements": []
+    }
 
-for sentence, classification in classified_results:
-    print(f"Sentence: {sentence.strip()}\nType: {classification}\n")
-    print(f"Total Emojis: {emoji_count}\n")
+    for sentence, classification in classified_results:
+        response["classified_results"].append({
+            "Sentence": sentence.strip(),
+            "Type": classification,
+            "Total Emojis": emoji_count
+        })
+        
+    for statement, recommendation in recommendations.items():
+        
+        response["recommendations"].append({
+            "Financial Statement": statement.strip(),
+            "Recommendation": recommendation
+        })
 
-    
-for statement, recommendation in recommendations.items():
-    print(f"Financial Statement: {statement.strip()}\nRecommendation: {recommendation}\n")
+    for analysis in analyzed_general_statements:
+        statement = analysis[0]
+        general_analysis = analysis[1][0]
+        sentiment = general_analysis['sentiment']
+        recommendation = general_analysis['recommendation']
 
-    
-print("\nGeneral Statements and Recommendations:\n")
-for analysis in analyzed_general_statements:
-    statement = analysis[0]  
-    
-    general_analysis = analysis[1][0]  
+        response["general_statements"].append({
+            "General Statement": statement,
+            "Sentiment": sentiment,
+            "Recommendation": recommendation
+        })
 
-    sentiment = general_analysis['sentiment'] 
-    recommendation = general_analysis['recommendation'] 
+    return jsonify(response)
 
-    print(f"General Statement: {statement}")
-    print(f"Sentiment: {sentiment}")
-    print(f"Recommendation: {recommendation}\n")
-
-
-
-
+if __name__ == '__main__':
+    app.run(debug=True)

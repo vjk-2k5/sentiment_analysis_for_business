@@ -12,9 +12,9 @@ def predict_sentiment(sentence):
 
 
 def get_recommendation(sentiment):
-    if sentiment == "very positive" or sentiment == "positive":
+    if sentiment == "very positive" or sentiment == "Positive":
         return "Keep up the good work!"
-    elif sentiment == "very negative" or sentiment == "negative":
+    elif sentiment == "very negative" or sentiment == "Negative":
         return "Consider reviewing your strategies."
     else:
         return "Stay informed about current trends."
