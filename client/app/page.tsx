@@ -32,10 +32,10 @@ export default function SentimentAnalyzer() {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block max-w-xl text-center justify-center">
-        <h1 className={title({ color: "green" })}>Sentiment Analyzer for Business &nbsp;</h1>
+        <h1 className={title({ color: "green" })}>Sentiment Analyzer for Business</h1>
         <br />
         <div className={subtitle({ class: "mt-4" })}>
-          Simply enter the text you want to analyze in the textarea below and click on the "Analyze" button.
+          Simply enter the text you want to analyze in the textarea below and click on "Analyze."
         </div>
       </div>
 
@@ -47,46 +47,51 @@ export default function SentimentAnalyzer() {
           rows={5}
           className="w-full p-2 mt-4 border rounded"
         />
-        <Button
-          className="mt-4"
-          onClick={analyzeSentiment}
-          color="primary"
-          auto
-        >
+        <Button className="mt-4" onClick={analyzeSentiment} color="primary" auto>
           Analyze
         </Button>
+
         {result && (
-          <div className="mt-4 text-center">
-            <h2 className="text-xl font-semibold">Analysis Result</h2>
-            <p>Total Emojis: {result["Total Emojis"]}</p>
-            <p>Overall Sentiment: {result["Overal Emoji Sentiment"]}</p>
-            <div>
-              <h3 className="text-lg font-semibold">Classified Results</h3>
-              {result.classified_results.map((item, index) => (
-                <div key={index}>
-                  <p>Sentence: {item.Sentence}</p>
-                  <p>Type: {item.Type}</p>
-                </div>
-              ))}
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">General Statements</h3>
-              {result.general_statements.map((item, index) => (
-                <div key={index}>
-                  <p>General Statement: {item["General Statement"]}</p>
-                  <p>Sentiment: {item.Sentiment}</p>
-                  <p>Recommendation: {item.Recommendation}</p>
-                </div>
-              ))}
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">Recommendations</h3>
-              {result.recommendations.map((item, index) => (
-                <div key={index}>
-                  <p>Financial Statement: {item["Financial Statement"]}</p>
-                  <p>Recommendation: {item.Recommendation}</p>
-                </div>
-              ))}
+          <div className="mt-6 p-4 border rounded shadow-lg w-full">
+            <h2 className="text-2xl font-semibold text-blue-600 mb-4">Analysis Summary</h2>
+
+            <div className="text-left space-y-3">
+              <div className="border-b pb-2 mb-3">
+                <h3 className="text-lg font-bold text-gray-700">Emoji & Sentiment Overview</h3>
+                <p><strong>Total Emojis:</strong> {result["Total Emojis"]}</p>
+                <p><strong>Overall Sentiment:</strong> {result["Overal Emoji Sentiment"]}</p>
+              </div>
+
+              <div className="border-b pb-2 mb-3">
+                <h3 className="text-lg font-bold text-gray-700">Classified Sentences</h3>
+                {result.classified_results.map((item, index) => (
+                  <div key={index} className="mb-2">
+                    <p><strong>Sentence:</strong> {item.Sentence}</p>
+                    <p><strong>Type:</strong> {item.Type}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-b pb-2 mb-3">
+                <h3 className="text-lg font-bold text-gray-700">General Statements</h3>
+                {result.general_statements.map((item, index) => (
+                  <div key={index} className="mb-2">
+                    <p><strong>Statement:</strong> {item["General Statement"]}</p>
+                    <p><strong>Sentiment:</strong> {item.Sentiment}</p>
+                    <p><strong>Recommendation:</strong> {item.Recommendation}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-gray-700">Financial Insights</h3>
+                {result.recommendations.map((item, index) => (
+                  <div key={index} className="mb-2">
+                    <p><strong>Statement:</strong> {item["Financial Statement"]}</p>
+                    <p><strong>Recommendation:</strong> {item.Recommendation}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
