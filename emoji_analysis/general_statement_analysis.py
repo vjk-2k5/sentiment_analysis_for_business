@@ -42,6 +42,7 @@ def get_recommendation(sentiment):
 
 def analyze_general_statements(paragraph):
     sentences = segment_sentences(paragraph)
+    print("Test:",sentences)
     general_statements = []
 
     for sentence in sentences:
