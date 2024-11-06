@@ -58,13 +58,14 @@ export default function SentimentAnalyzer() {
         {result && (
           <div className="mt-4 text-center">
             <h2 className="text-xl font-semibold">Analysis Result</h2>
+            <p>Total Emojis: {result["Total Emojis"]}</p>
+            <p>Overall Sentiment: {result["Overal Emoji Sentiment"]}</p>
             <div>
               <h3 className="text-lg font-semibold">Classified Results</h3>
               {result.classified_results.map((item, index) => (
                 <div key={index}>
                   <p>Sentence: {item.Sentence}</p>
                   <p>Type: {item.Type}</p>
-                  <p>Total Emojis: {item["Total Emojis"]}</p>
                 </div>
               ))}
             </div>

@@ -4,7 +4,7 @@ from transformers import BertTokenizer, BertForSequenceClassification
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=3)
-model.load_state_dict(torch.load('C:\\Rohit\\Projects\\Fintech\\sentiment_analysis_for_business\\fin_bert_trained_with_colab\\finetuned_finBERT_epoch_1.model', map_location=device))
+model.load_state_dict(torch.load('finetuned_finBERT_epoch_1.model', map_location=device))
 model.to(device)
 model.eval()
 
@@ -47,7 +47,6 @@ def get_recommendation(sentiment):
     else:
         return "Try to improve your current strategy while monitoring the situation; clarity is key."
 
-#text = " The stock market is declining! 😭 I made a huge loss on my investment😔.The weather is harsh today, and I feel lazy. 🌞"
 
 def finbertAnalysis(text):
     predicted_class, probabilities = predict_sentiment(text)
@@ -63,8 +62,3 @@ def finbertAnalysis(text):
     return  sentiment, recommendation, probabilities
 
 
-
-
-#print(f"Predicted class: {predicted_class}")
-#print(f"Sentiment : {sentiment}")
-#print(f"Probabilities: {probabilities}")

@@ -50,8 +50,8 @@ def classify_paragraph(paragraph, emoji_list, emoji_sentiment_data):
 
 
 nlp = spacy.load('en_core_web_sm')
-financial_terms = load_financial_terms('C:\\Rohit\\Projects\Fintech\\sentiment_analysis_for_business\\emoji_analysis\\financial_terms.csv')
-emoji_list, emoji_sentiment_data = load_emoji_data('C:\\Rohit\\Projects\Fintech\\sentiment_analysis_for_business\\emoji_analysis\\Emoji_Sentiment_Data_v1.0.csv')
+financial_terms = load_financial_terms('financial_terms.csv')
+emoji_list, emoji_sentiment_data = load_emoji_data('Emoji_Sentiment_Data_v1.0.csv')
 
 
 @app.route('/analyze', methods=['POST'])
@@ -60,18 +60,18 @@ def analyze_paragraph():
     paragraph = data.get('paragraph', '')
 
     classified_results, emoji_count, recommendations, emoji_sentiment, analyzed_general_statements = classify_paragraph(paragraph, emoji_list, emoji_sentiment_data)
-
     response = {
         "classified_results": [],
         "recommendations": [],
-        "general_statements": []
+        "general_statements": [],
+        "Total Emojis": emoji_count,
+        "Overal Emoji Sentiment": emoji_sentiment
     }
 
     for sentence, classification in classified_results:
         response["classified_results"].append({
             "Sentence": sentence.strip(),
             "Type": classification,
-            "Total Emojis": emoji_count
         })
         
     for statement, recommendation in recommendations.items():
