@@ -1,24 +1,32 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code";
-import { button as buttonStyles } from "@nextui-org/theme";
 import { Textarea, Button } from "@nextui-org/react";
 
-import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
-//import Sentiment from "sentiment";
 
 export default function SentimentAnalyzer() {
   const [text, setText] = useState("");
   const [result, setResult] = useState(null);
 
-  const analyzeSentiment = () => {
-    const sentiment = new Sentiment();
-    const analysis = sentiment.analyze(text);
-    setResult(analysis);
+  const analyzeSentiment = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paragraph: text }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   return (
@@ -27,11 +35,11 @@ export default function SentimentAnalyzer() {
         <h1 className={title({ color: "green" })}>Sentiment Analyzer for Business &nbsp;</h1>
         <br />
         <div className={subtitle({ class: "mt-4" })}>
-        Simply enter the text you want to analyze in the textarea below and click on the "Analyze" button.
+          Simply enter the text you want to analyze in the textarea below and click on the "Analyze" button.
         </div>
       </div>
 
-      <div className="flex</p> flex-col gap-3 w-full max-w-xl">
+      <div className="flex flex-col gap-3 w-full max-w-xl">
         <Textarea
           placeholder="Enter text to analyze"
           value={text}
@@ -50,14 +58,39 @@ export default function SentimentAnalyzer() {
         {result && (
           <div className="mt-4 text-center">
             <h2 className="text-xl font-semibold">Analysis Result</h2>
-            <p>Score: {result.score}</p>
-            <p>Comparative: {result.comparative}</p>
-            <p>Positive Words: {result.positive.join(", ")}</p>
-            <p>Negative Words: {result.negative.join(", ")}</p>
+            <p>Total Emojis: {result["Total Emojis"]}</p>
+            <p>Overall Sentiment: {result["Overal Emoji Sentiment"]}</p>
+            <div>
+              <h3 className="text-lg font-semibold">Classified Results</h3>
+              {result.classified_results.map((item, index) => (
+                <div key={index}>
+                  <p>Sentence: {item.Sentence}</p>
+                  <p>Type: {item.Type}</p>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">General Statements</h3>
+              {result.general_statements.map((item, index) => (
+                <div key={index}>
+                  <p>General Statement: {item["General Statement"]}</p>
+                  <p>Sentiment: {item.Sentiment}</p>
+                  <p>Recommendation: {item.Recommendation}</p>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold">Recommendations</h3>
+              {result.recommendations.map((item, index) => (
+                <div key={index}>
+                  <p>Financial Statement: {item["Financial Statement"]}</p>
+                  <p>Recommendation: {item.Recommendation}</p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
-
     </section>
   );
 }
