@@ -40,7 +40,13 @@ def classify_paragraph(paragraph, emoji_list, emoji_sentiment_data):
     financial_statements = [sentence for sentence, classification in classified_sentences if classification == "financial"]
     
     sentiment_results = [(statement, finbertAnalysis(statement)) for statement in financial_statements]
-    recommendations = {statement: get_recommendation(sentiment) for statement, sentiment in sentiment_results}
+    recommendations = {
+    statement: {
+        "sentiment": sentiment[0],
+        "recommendation": get_recommendation(sentiment)
+    }
+    for statement, sentiment in sentiment_results   
+    }
     emoji_sentiment = analyze_emoji_sentiment(extracted_emojis, emoji_sentiment_data)
     general_statements = [sentence for sentence, classification in classified_sentences if classification == "general"]
     analyzed_general_statements = [(statement, analyze(statement)) for statement in general_statements]
@@ -73,12 +79,12 @@ def analyze_paragraph():
             "Sentence": sentence.strip(),
             "Type": classification,
         })
-        
-    for statement, recommendation in recommendations.items():
-        
+    print("Nad",recommendations)
+    for statement, details in recommendations.items():
         response["recommendations"].append({
             "Financial Statement": statement.strip(),
-            "Recommendation": recommendation
+            "Sentiment": details["sentiment"],
+            "Recommendation": details["recommendation"]
         })
 
     for analysis in analyzed_general_statements:
