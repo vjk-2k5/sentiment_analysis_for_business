@@ -88,6 +88,7 @@ export default function SentimentAnalyzer() {
                 {result.recommendations.map((item, index) => (
                   <div key={index} className="mb-2">
                     <p><strong>Statement:</strong> {item["Financial Statement"]}</p>
+                    <p><strong>Sentiment:</strong> {item.Sentiment}</p>
                     <p><strong>Recommendation:</strong> {item.Recommendation}</p>
                   </div>
                 ))}
