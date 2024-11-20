@@ -31,7 +31,7 @@ export default function SentimentAnalyzer() {
 
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-xl text-center justify-center">
+      <div className="inline-block max-w-3xl text-center justify-center">
         <h1 className={title({ color: "green" })}>Sentiment Analyzer for Business</h1>
         <br />
         <div className={subtitle({ class: "mt-4" })}>
@@ -39,7 +39,7 @@ export default function SentimentAnalyzer() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 w-full max-w-xl">
+      <div className="flex flex-col gap-3 w-full max-w-4xl">
         <Textarea
           placeholder="Enter text to analyze"
           value={text}
@@ -47,52 +47,97 @@ export default function SentimentAnalyzer() {
           rows={5}
           className="w-full p-2 mt-4 border rounded"
         />
-        <Button className="mt-4" onClick={analyzeSentiment} color="primary" auto>
+        <Button className="mt-4" onClick={analyzeSentiment} color="primary" auto >
           Analyze
         </Button>
 
         {result && (
-          <div className="mt-6 p-4 border rounded shadow-lg w-full">
-            <h2 className="text-2xl font-semibold text-blue-600 mb-4">Analysis Summary</h2>
+          <div className="mt-6 p-6 border rounded shadow-lg w-full max-w-5xl">
+            <h2 className="text-3xl font-semibold text-blue-600 mb-6 text-center">
+              Analysis Summary
+            </h2>
 
-            <div className="text-left space-y-3">
-              <div className="border-b pb-2 mb-3">
-                <h3 className="text-lg font-bold text-gray-700">Emoji & Sentiment Overview</h3>
-                <p><strong>Total Emojis:</strong> {result["Total Emojis"]}</p>
-                <p><strong>Overall Sentiment:</strong> {result["Overal Emoji Sentiment"]}</p>
-              </div>
+            {/* Emoji Overview */}
+            <div className="text-lg mb-8">
+              <p><strong>Total Emojis:</strong> {result["Total Emojis"]}</p>
+              <p><strong>Overall Sentiment:</strong> {result["Overal Emoji Sentiment"]}</p>
+            </div>
 
-              <div className="border-b pb-2 mb-3">
-                <h3 className="text-lg font-bold text-gray-700">Classified Sentences</h3>
-                {result.classified_results.map((item, index) => (
-                  <div key={index} className="mb-2">
-                    <p><strong>Sentence:</strong> {item.Sentence}</p>
-                    <p><strong>Type:</strong> {item.Type}</p>
-                  </div>
-                ))}
-              </div>
+            {/* Classified Sentences Table */}
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-blue-700 mb-4">
+                Classified Sentences
+              </h3>
+              <table className="table-auto w-full border-collapse border border-gray-800 text-lg">
+                <thead>
+                  <tr>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Sentence</th>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.classified_results.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border-2 border-gray-800 px-4 py-2">{item.Sentence}</td>
+                      <td className="border-2 border-gray-800 px-4 py-2">{item.Type}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              <div className="border-b pb-2 mb-3">
-                <h3 className="text-lg font-bold text-gray-700">General Statements</h3>
-                {result.general_statements.map((item, index) => (
-                  <div key={index} className="mb-2">
-                    <p><strong>Statement:</strong> {item["General Statement"]}</p>
-                    <p><strong>Sentiment:</strong> {item.Sentiment}</p>
-                    <p><strong>Recommendation:</strong> {item.Recommendation}</p>
-                  </div>
-                ))}
-              </div>
+            {/* General Statements Table */}
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-blue-700 mb-4">
+                General Statements
+              </h3>
+              <table className="table-auto w-full border-collapse border border-gray-800 text-lg">
+                <thead>
+                  <tr>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Statement</th>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Sentiment</th>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Recommendation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.general_statements.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border-2 border-gray-800 px-4 py-2">
+                        {item["General Statement"]}
+                      </td>
+                      <td className="border-2 border-gray-800 px-4 py-2">{item.Sentiment}</td>
+                      <td className="border-2 border-gray-800 px-4 py-2">{item.Recommendation}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              <div>
-                <h3 className="text-lg font-bold text-gray-700">Financial Insights</h3>
-                {result.recommendations.map((item, index) => (
-                  <div key={index} className="mb-2">
-                    <p><strong>Statement:</strong> {item["Financial Statement"]}</p>
-                    <p><strong>Sentiment:</strong> {item.Sentiment}</p>
-                    <p><strong>Recommendation:</strong> {item.Recommendation}</p>
-                  </div>
-                ))}
-              </div>
+            {/* Financial Insights Table */}
+            <div>
+              <h3 className="text-xl font-bold text-blue-700 mb-4">
+                Financial Insights
+              </h3>
+              <table className="table-auto w-full border-collapse border border-gray-800 text-lg">
+                <thead>
+                  <tr>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Statement</th>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Sentiment</th>
+                    <th className="border-2 border-gray-800 px-4 py-2 text-left">Recommendation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result.recommendations.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border-2 border-gray-800 px-4 py-2">
+                        {item["Financial Statement"]}
+                      </td>
+                      <td className="border-2 border-gray-800 px-4 py-2">{item.Sentiment}</td>
+                      <td className="border-2 border-gray-800 px-4 py-2">{item.Recommendation}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
